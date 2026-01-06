@@ -2,15 +2,10 @@ import os
 
 from invoke import task
 
-INVENIO_ENVIRONMENTS = [
-    "local",
-    "development",
-    "qa",
-    "production"
-]
+INVENIO_ENVIRONMENTS = ["local", "development", "qa", "production"]
 
 
-@task(aliases=['init'])
+@task(aliases=["init"])
 def initialize(_ctx):
     """
     Initialize the project's environment configuration files.
@@ -24,7 +19,7 @@ def initialize_invenio_environment(environment):
         """\
 BEARER_TOKEN=insert_token_here
 BASE_URL=https://127.0.0.1:5000
-        """
+        """,
     )
 
 

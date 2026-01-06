@@ -51,9 +51,9 @@ $ invoke records.create-draft qa
 Upload a single file to a draft record.
 
 ```bash
-$ invoke records.upload-file --environment=qa --draft-id=exeph-73h23 --file-path=tasks/records.py
-$ invoke records.upload-file -e qa -d exeph-73h23 -f tasks/records.py
-$ invoke records.upload-file qa exeph-73h23 tasks/records.py
+$ invoke records.upload-file --draft-id=exeph-73h23 --file-path=tasks/records.py --environment=qa
+$ invoke records.upload-file qa -d exeph-73h23 -f tasks/records.py -e
+$ invoke records.upload-file exeph-73h23 tasks/records.py qa
 ```
 
 #### Upload Files
@@ -61,7 +61,7 @@ $ invoke records.upload-file qa exeph-73h23 tasks/records.py
 Upload multiple files to a draft record.
 
 ```bash
-$ invoke records.upload-files --environment=qa --draft-id=vhtmn-sw870 --glob-pattern="data/*.wacz"
-$ invoke records.upload-files -e qa -d vhtmn-sw870 -g "data/*.wacz"
-$ invoke records.upload-files qa vhtmn-sw870 "data/*.wacz"
+$ invoke records.upload-files --draft-id=vhtmn-sw870 --glob-pattern="data/*.wacz" --environment=qa
+$ invoke records.upload-files -d vhtmn-sw870 -g "data/*.wacz" -e qa
+$ invoke records.upload-files vhtmn-sw870 "data/*.wacz" qa
 ```

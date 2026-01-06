@@ -1,26 +1,21 @@
 def json_headers(bearer_token):
     return {
         "Authorization": "Bearer {0}".format(bearer_token),
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
 
 def octet_stream_headers(bearer_token):
     return {
         "Authorization": "Bearer {0}".format(bearer_token),
-        "Content-Type": "application/octet-stream"
+        "Content-Type": "application/octet-stream",
     }
 
 
 def minimal_record():
     return {
-        "access": {
-            "record": "public",
-            "files": "public"
-        },
-        "files": {
-            "enabled": True
-        },
+        "access": {"record": "public", "files": "public"},
+        "files": {"enabled": True},
         "metadata": {
             "creators": [
                 {

@@ -13,23 +13,33 @@ from tasks.helpers import json_headers, octet_stream_headers, minimal_record
 
 def initialize_and_commit_file(config, draft_id, file_path):
     print("Uploading file {0}...".format(file_path))
+
     file_name = file_path.split("/")[-1]
     file_data = [{"key": file_name}]
 
+    file_initialize_url = "{0}/api/records/{1}/draft/files".format(
+        config["BASE_URL"], draft_id
+    )
+    file_content_url = "{0}/api/records/{1}/draft/files/{2}/content".format(
+        config["BASE_URL"], draft_id, file_name
+    )
+    file_commit_url = "{0}/api/records/{1}/draft/files/{2}/commit".format(
+        config["BASE_URL"], draft_id, file_name
+    )
+
     print("Initializing file...")
     initialize_file_response = requests.post(
-        "{0}/api/records/{1}/draft/files".format(config["BASE_URL"], draft_id),
+        file_initialize_url,
         headers=json_headers(config["BEARER_TOKEN"]),
         json=file_data,
         verify=False,
     )
 
-    print("Initialize File Response Code: {0}".format(initialize_file_response.status_code))
-
-    initialize_json = json.loads(initialize_file_response.content)
-    file_content_url = initialize_json["entries"][0]["links"]["content"]
-    file_commit_url = initialize_json["entries"][0]["links"]["commit"]
-
+    print(
+        "Initialize File Response Code: {0}".format(
+            initialize_file_response.status_code
+        )
+    )
     print("File Content URL: {0}".format(file_content_url))
 
     print("Uploading file...")
@@ -39,7 +49,7 @@ def initialize_and_commit_file(config, draft_id, file_path):
             headers=octet_stream_headers(config["BEARER_TOKEN"]),
             data=file,
             stream=True,
-            verify=False
+            verify=False,
         )
 
     print("File Upload Response Code: {0}".format(file_upload_response.status_code))
@@ -57,15 +67,11 @@ def initialize_and_commit_file(config, draft_id, file_path):
 @task(
     help={
         "environment": "Target UltraViolet environment",
-        "data": "JSON string of metadata to create the record with"
+        "data": "JSON string of metadata to create the record with",
     },
     optional=["environment", "data"],
 )
-def create_draft(
-        _ctx,
-        environment="local",
-        data=minimal_record()
-):
+def create_draft(_ctx, environment="local", data=minimal_record()):
     """
     Create a draft record
     """
@@ -151,7 +157,7 @@ def load_environment(environment):
     help={
         "environment": "Target UltraViolet environment",
     },
-    optional=["environment"]
+    optional=["environment"],
 )
 def test(_ctx, environment="local"):
     """
@@ -167,7 +173,7 @@ def test(_ctx, environment="local"):
         response = requests.get(
             "{0}/api/records".format(config["BASE_URL"]),
             headers=json_headers(config["BEARER_TOKEN"]),
-            verify=False
+            verify=False,
         )
 
         print("{0} records found.".format(response.json()["hits"]["total"]))
