@@ -1,7 +1,6 @@
 import glob
 import json
 import os
-from contextlib import contextmanager
 
 import requests
 import urllib3
@@ -140,17 +139,6 @@ def upload_files(_ctx, draft_id, glob_pattern, environment="local"):
 
         for file_path in glob.glob(glob_pattern):
             initialize_and_commit_file(config, draft_id, file_path)
-
-
-@contextmanager
-def load_environment(environment):
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-        yield config
-    else:
-        print("Environment {0} not found. Exiting...".format(environment))
 
 
 @task(
