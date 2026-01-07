@@ -65,3 +65,13 @@ $ invoke records.upload-files --draft-id=vhtmn-sw870 --glob-pattern="data/*.wacz
 $ invoke records.upload-files -d vhtmn-sw870 -g "data/*.wacz" -e qa
 $ invoke records.upload-files vhtmn-sw870 "data/*.wacz" qa
 ```
+
+## Development
+
+### Tests
+
+To run tests, using the following command:
+
+```bash
+$ python -m pytest
+```
