@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 invoke = "*"
 requests = "*"
+dotenv = "*"
 
 [dev-packages]
 black = "*"
