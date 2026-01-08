@@ -26,8 +26,9 @@ def minimal_record():
                     }
                 },
             ],
+            "publisher": "Megadodo Publications",
             "publication_date": "2020-06-01",
             "resource_type": {"id": "image-photo"},
-            "title": "A Romans story",
+            "title": "On Sandwhich Making",
         },
     }

@@ -141,6 +141,34 @@ def upload_files(_ctx, draft_id, glob_pattern, environment="local"):
             initialize_and_commit_file(config, draft_id, file_path)
 
 
+@task
+def publish(_ctx, draft_id, environment="local"):
+    """
+    Publish a draft record
+    """
+    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
+
+    environment_file = "environments/{0}.env".format(environment)
+
+    if os.path.isfile(environment_file):
+        config = dotenv_values(environment_file)
+
+        publish_response = requests.post(
+            "{0}/api/records/{1}/draft/actions/publish".format(
+                config["BASE_URL"], draft_id
+            ),
+            headers=json_headers(config["BEARER_TOKEN"]),
+            verify=False,
+        )
+
+        publish_response.raise_for_status()
+
+        print("Publish Response Code: {0}".format(publish_response.status_code))
+
+        record_id = publish_response.json()["id"]
+        print("Record ID: {0}".format(record_id))
+
+
 @task(
     help={
         "environment": "Target UltraViolet environment",

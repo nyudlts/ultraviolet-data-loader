@@ -66,6 +66,16 @@ $ invoke records.upload-files -d vhtmn-sw870 -g "data/*.wacz" -e qa
 $ invoke records.upload-files vhtmn-sw870 "data/*.wacz" qa
 ```
 
+#### Publish Draft
+
+Publish a draft record.
+
+```bash
+$ invoke records.publish --draft-id=006da-12v05 --environment=development
+$ invoke records.publish -d 006da-12v05 -e development
+$ invoke records.publish 006da-12v05 development
+```
+
 ## Development
 
 ### Tests
