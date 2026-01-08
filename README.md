@@ -73,5 +73,5 @@ $ invoke records.upload-files vhtmn-sw870 "data/*.wacz" qa
 To run tests, using the following command:
 
 ```bash
-$ python -m pytest
+$ pipenv run python -m pytest
 ```
