@@ -16,7 +16,8 @@ $ pipenv shell
 $ invoke initialize
 ```
 
-Then you'll want to update the generated `environments/*.env` files with the correct values for each configuration variable.
+Then you'll want to update the generated `environments/*.env` files with the correct values for each configuration
+variable.
 
 ## Tasks
 
@@ -33,6 +34,16 @@ You should only need to do this once.
 ```bash
 $ invoke initialize
 ```
+
+#### Acquiring an Access Token
+
+In order to run the majority of tasks you will need an Access Token. To obtain one:
+
+1. Log in to the UltraViolet instance you wish to access.
+2. Click on the upper-right navigation dropdown and click **Applications**.
+3. In the **Personal access tokens** section click on **+ New token**
+4. Give the token a name and click **Create**.
+5. Copy the provided **Access token** and paste it into the `.env` file for that environment.
 
 ### Records
 

@@ -29,7 +29,7 @@ def initialize_and_commit_file(config, draft_id, file_path):
     print("Initializing file...")
     initialize_file_response = requests.post(
         file_initialize_url,
-        headers=json_headers(config["BEARER_TOKEN"]),
+        headers=json_headers(config["ACCESS_TOKEN"]),
         json=file_data,
         verify=False,
     )
@@ -45,7 +45,7 @@ def initialize_and_commit_file(config, draft_id, file_path):
     with open(file_path, "rb") as file:
         file_upload_response = requests.put(
             file_content_url,
-            headers=octet_stream_headers(config["BEARER_TOKEN"]),
+            headers=octet_stream_headers(config["ACCESS_TOKEN"]),
             data=file,
             stream=True,
             verify=False,
@@ -56,7 +56,7 @@ def initialize_and_commit_file(config, draft_id, file_path):
     print("Committing file...")
     commit_response = requests.post(
         file_commit_url,
-        headers=json_headers(config["BEARER_TOKEN"]),
+        headers=json_headers(config["ACCESS_TOKEN"]),
         verify=False,
     )
     print("Commit File Response Code: {0}".format(commit_response.status_code))
@@ -83,7 +83,7 @@ def create_draft(_ctx, environment="local", data=minimal_record()):
 
         draft_response = requests.post(
             "{0}/api/records".format(config["BASE_URL"]),
-            headers=json_headers(config["BEARER_TOKEN"]),
+            headers=json_headers(config["ACCESS_TOKEN"]),
             data=json.dumps(data),
             verify=False,
         )
@@ -157,7 +157,7 @@ def publish(_ctx, draft_id, environment="local"):
             "{0}/api/records/{1}/draft/actions/publish".format(
                 config["BASE_URL"], draft_id
             ),
-            headers=json_headers(config["BEARER_TOKEN"]),
+            headers=json_headers(config["ACCESS_TOKEN"]),
             verify=False,
         )
 
@@ -188,7 +188,7 @@ def test(_ctx, environment="local"):
 
         response = requests.get(
             "{0}/api/records".format(config["BASE_URL"]),
-            headers=json_headers(config["BEARER_TOKEN"]),
+            headers=json_headers(config["ACCESS_TOKEN"]),
             verify=False,
         )
 

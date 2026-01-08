@@ -1,13 +1,13 @@
-def json_headers(bearer_token):
+def json_headers(ACCESS_TOKEN):
     return {
-        "Authorization": "Bearer {0}".format(bearer_token),
+        "Authorization": "Bearer {0}".format(ACCESS_TOKEN),
         "Content-Type": "application/json",
     }
 
 
-def octet_stream_headers(bearer_token):
+def octet_stream_headers(ACCESS_TOKEN):
     return {
-        "Authorization": "Bearer {0}".format(bearer_token),
+        "Authorization": "Bearer {0}".format(ACCESS_TOKEN),
         "Content-Type": "application/octet-stream",
     }
 

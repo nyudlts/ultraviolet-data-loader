@@ -17,7 +17,7 @@ def initialize_invenio_environment(environment):
     write_environment_file(
         "environments/{0}.env".format(environment),
         """\
-BEARER_TOKEN=insert_token_here
+ACCESS_TOKEN=insert_token_here
 BASE_URL=https://127.0.0.1:5000
         """,
     )
