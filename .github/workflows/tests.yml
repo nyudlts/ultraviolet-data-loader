@@ -23,4 +23,8 @@ jobs:
       - name: "Install packages"
         run: pipenv install --dev
       - name: "Run tests"
-        run: pipenv run python -m pytest
+        run: |
+          pipenv shell
+          python -m pytest
+          exit
+  
