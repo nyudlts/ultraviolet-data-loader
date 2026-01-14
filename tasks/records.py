@@ -1,13 +1,15 @@
 import glob
 import json
-import os
 
 import requests
-import urllib3
-from dotenv import dotenv_values
 from invoke import task
 
-from tasks.helpers import json_headers, octet_stream_headers, minimal_record
+from tasks.helpers import (
+    json_headers,
+    octet_stream_headers,
+    minimal_record,
+    environment_config,
+)
 
 
 def initialize_and_commit_file(config, draft_id, file_path):
@@ -74,13 +76,7 @@ def create_draft(_ctx, environment="local", data=minimal_record()):
     """
     Create a draft record
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         draft_response = requests.post(
             "{0}/api/records".format(config["BASE_URL"]),
             headers=json_headers(config["ACCESS_TOKEN"]),
@@ -108,13 +104,7 @@ def upload_file(_ctx, draft_id, file_path, environment="local"):
     """
     Upload a single file to a record
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         initialize_and_commit_file(config, draft_id, file_path)
 
 
@@ -130,13 +120,7 @@ def upload_files(_ctx, draft_id, glob_pattern, environment="local"):
     """
     Upload multiple files to a record using glob patterns (*.jpg, code/*.py, etc.)
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         for file_path in glob.glob(glob_pattern):
             initialize_and_commit_file(config, draft_id, file_path)
 
@@ -146,13 +130,7 @@ def publish(_ctx, draft_id, environment="local"):
     """
     Publish a draft record
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         publish_response = requests.post(
             "{0}/api/records/{1}/draft/actions/publish".format(
                 config["BASE_URL"], draft_id
@@ -179,13 +157,7 @@ def test(_ctx, environment="local"):
     """
     Tests access to an environment by listing the number of records.
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         response = requests.get(
             "{0}/api/records".format(config["BASE_URL"]),
             headers=json_headers(config["ACCESS_TOKEN"]),
@@ -193,6 +165,3 @@ def test(_ctx, environment="local"):
         )
 
         print("{0} records found.".format(response.json()["hits"]["total"]))
-
-    else:
-        print("ERROR: Environment '{0}' not found".format(environment))
