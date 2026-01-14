@@ -87,6 +87,38 @@ $ invoke records.publish -d 006da-12v05 -e development
 $ invoke records.publish 006da-12v05 development
 ```
 
+### Communities
+
+#### List All
+
+List all communities.
+
+```bash
+$ invoke communities.list-all --environment=qa
+$ invoke communities.list-all -e qa
+$ invoke communities.list-all qa
+```
+
+#### Show
+
+Show extended info about a single community.
+
+```bash
+$ invoke communities.show --slug=foo --environment=qa
+$ invoke communities.show -s foo -e qa
+$ invoke communities.show foo qa
+```
+
+#### Enable Subcommunities
+
+Enable subcommunities on the target community
+
+```bash
+$ invoke communities.enable-subcommunities --slug=foo --environment=qa
+$ invoke communities.enable-subcommunities -s foo -e qa
+$ invoke communities.enable-subcommunities foo qa
+```
+
 ## Development
 
 ### Tests
