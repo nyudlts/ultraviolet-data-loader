@@ -1,13 +1,10 @@
 import json
-import os
 
 import requests
-import urllib3
-from dotenv import dotenv_values
 from invoke import task
 from requests import HTTPError
 
-from tasks.helpers import json_headers
+from tasks.helpers import json_headers, environment_config
 
 
 @task(
@@ -20,13 +17,7 @@ def list_all(_ctx, environment="local"):
     """
     Lists all Communities
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         response = requests.get(
             "{0}/api/communities".format(config["BASE_URL"]),
             headers=json_headers(config["ACCESS_TOKEN"]),
@@ -50,13 +41,7 @@ def show(_ctx, slug, environment="local"):
     """
     Displays the output of a single community
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         response = requests.get(
             "{0}/api/communities/{1}".format(config["BASE_URL"], slug),
             verify=False,
@@ -76,13 +61,7 @@ def enable_subcommunities(_ctx, slug, environment="local"):
     """
     Enables subcommunities on the given top-level community
     """
-    urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-
-    environment_file = "environments/{0}.env".format(environment)
-
-    if os.path.isfile(environment_file):
-        config = dotenv_values(environment_file)
-
+    with environment_config(environment) as config:
         get_response = requests.get(
             "{0}/api/communities/{1}".format(config["BASE_URL"], slug),
             headers=json_headers(config["ACCESS_TOKEN"]),
