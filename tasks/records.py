@@ -68,19 +68,27 @@ def initialize_and_commit_file(config, draft_id, file_path):
 @task(
     help={
         "environment": "Target UltraViolet environment",
-        "data": "JSON string of metadata to create the record with",
+        "file-path": "Path to JSON file containing the record data. If not provided, a minimal record will be created.",
     },
-    optional=["environment", "data"],
+    optional=["environment", "file_path"],
 )
-def create_draft(_ctx, environment="local", data=minimal_record()):
+def create_draft(_ctx, environment="local", file_path=None):
     """
     Create a draft record
     """
     with environment_config(environment) as config:
+        data = ""
+
+        if file_path is None:
+            data = json.dumps(minimal_record())
+        else:
+            with open(file_path, "r") as file:
+                data = file.read()
+
         draft_response = requests.post(
             "{0}/api/records".format(config["BASE_URL"]),
             headers=json_headers(config["ACCESS_TOKEN"]),
-            data=json.dumps(data),
+            data=data,
             verify=False,
         )
 
