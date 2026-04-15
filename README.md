@@ -6,7 +6,7 @@ A collection of tasks for testing and accessing UltraViolet instances.
 
 ### Project Setup
 
-To check out the project and prepate your local environment, do the following:
+To check out the project and prepare your local environment, do the following:
 
 ```bash
 $ git clone git@github.com:nyudlts/ultraviolet-data-loader.git
@@ -23,7 +23,7 @@ variable.
 
 To view the list of available tasks use `invoke --list`.
 
-To view help on a particular tasks use `invoke --help <task_name>`.
+To view help on a particular task use `invoke --help <task_name>`.
 
 ### Initialize
 
@@ -37,11 +37,11 @@ $ invoke initialize
 
 #### Acquiring an Access Token
 
-In order to run the majority of tasks you will need an Access Token. To obtain one:
+To run the majority of tasks, you will need an Access Token. To get one:
 
 1. Log in to the UltraViolet instance you wish to access.
 2. Click on the upper-right navigation dropdown and click **Applications**.
-3. In the **Personal access tokens** section click on **+ New token**
+3. In the **Personal access tokens** section, click on **+ New token**
 4. Give the token a name and click **Create**.
 5. Copy the provided **Access token** and paste it into the `.env` file for that environment.
 
@@ -52,9 +52,8 @@ In order to run the majority of tasks you will need an Access Token. To obtain o
 Creates a draft record and provides its Draft ID.
 
 ```bash
-$ invoke records.create-draft --environment=qa
-$ invoke records.create-draft -e qa
-$ invoke records.create-draft qa
+$ invoke records.create-draft --environment=qa --file-path=data/record.json
+$ invoke records.create-draft -e qa -f data/record.json
 ```
 
 #### Upload File
@@ -63,8 +62,7 @@ Upload a single file to a draft record.
 
 ```bash
 $ invoke records.upload-file --draft-id=exeph-73h23 --file-path=tasks/records.py --environment=qa
-$ invoke records.upload-file qa -d exeph-73h23 -f tasks/records.py -e
-$ invoke records.upload-file exeph-73h23 tasks/records.py qa
+$ invoke records.upload-file -e qa -d exeph-73h23 -f tasks/records.py
 ```
 
 #### Upload Files
@@ -74,7 +72,6 @@ Upload multiple files to a draft record.
 ```bash
 $ invoke records.upload-files --draft-id=vhtmn-sw870 --glob-pattern="data/*.wacz" --environment=qa
 $ invoke records.upload-files -d vhtmn-sw870 -g "data/*.wacz" -e qa
-$ invoke records.upload-files vhtmn-sw870 "data/*.wacz" qa
 ```
 
 #### Publish Draft
@@ -84,7 +81,6 @@ Publish a draft record.
 ```bash
 $ invoke records.publish --draft-id=006da-12v05 --environment=development
 $ invoke records.publish -d 006da-12v05 -e development
-$ invoke records.publish 006da-12v05 development
 ```
 
 ### Communities
@@ -96,7 +92,6 @@ List all communities.
 ```bash
 $ invoke communities.list-all --environment=qa
 $ invoke communities.list-all -e qa
-$ invoke communities.list-all qa
 ```
 
 #### Show
@@ -106,7 +101,6 @@ Show extended info about a single community.
 ```bash
 $ invoke communities.show --slug=foo --environment=qa
 $ invoke communities.show -s foo -e qa
-$ invoke communities.show foo qa
 ```
 
 #### Enable Subcommunities
@@ -116,14 +110,13 @@ Enable subcommunities on the target community
 ```bash
 $ invoke communities.enable-subcommunities --slug=foo --environment=qa
 $ invoke communities.enable-subcommunities -s foo -e qa
-$ invoke communities.enable-subcommunities foo qa
 ```
 
 ## Development
 
 ### Tests
 
-To run tests, using the following command:
+To run tests, use the following command:
 
 ```bash
 $ pipenv run python -m pytest
