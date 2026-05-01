@@ -1,6 +1,7 @@
 import glob
 import json
 import sys
+from json import JSONDecodeError
 
 import requests
 from invoke import task
@@ -88,7 +89,7 @@ def create_draft(_ctx, environment="local", file_path=None):
 
                 try:
                     json.loads(data)
-                except Exception as err:
+                except JSONDecodeError as err:
                     print("Error parsing {0} - {1}".format(file_path, err))
                     sys.exit(1)
 
