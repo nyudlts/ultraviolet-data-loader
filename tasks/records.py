@@ -1,5 +1,7 @@
 import glob
 import json
+import sys
+from json import JSONDecodeError
 
 import requests
 from invoke import task
@@ -84,6 +86,12 @@ def create_draft(_ctx, environment="local", file_path=None):
         else:
             with open(file_path, "r") as file:
                 data = file.read()
+
+                try:
+                    json.loads(data)
+                except JSONDecodeError as err:
+                    print("Error parsing {0} - {1}".format(file_path, err))
+                    sys.exit(1)
 
         draft_response = requests.post(
             "{0}/api/records".format(config["BASE_URL"]),
