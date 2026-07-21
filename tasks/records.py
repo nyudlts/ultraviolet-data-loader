@@ -1,10 +1,12 @@
 import glob
 import json
+import os
 import sys
 from json import JSONDecodeError
 
 import requests
 from invoke import task
+from loader import Loader
 
 from tasks.helpers import (
     json_headers,
@@ -15,10 +17,23 @@ from tasks.helpers import (
 
 
 def initialize_and_commit_file(config, draft_id, file_path):
-    print("Uploading file {0}...".format(file_path))
-
     file_name = file_path.split("/")[-1]
     file_data = [{"key": file_name}]
+
+    log_dir             = os.path.join("logs", "uploads", str(draft_id))
+    success_log_path    = os.path.join(log_dir, "success.txt")
+    fail_log_path       = os.path.join(log_dir, "fail.txt")
+
+    # skip if the file has already been uploaded successfully
+    if os.path.exists(success_log_path):
+        with open(success_log_path, "r") as log_file:
+            if file_name in log_file.read().splitlines():
+                print("Skipping {0} - already uploaded successfully.".format(file_name))
+                return
+            
+
+    os.makedirs(log_dir, exist_ok=True)
+    print("Starting {0}...".format(file_name))
 
     file_initialize_url = "{0}/api/records/{1}/draft/files".format(
         config["BASE_URL"], draft_id
@@ -30,43 +45,55 @@ def initialize_and_commit_file(config, draft_id, file_path):
         config["BASE_URL"], draft_id, file_name
     )
 
-    print("Initializing file...")
-    initialize_file_response = requests.post(
-        file_initialize_url,
-        headers=json_headers(config["ACCESS_TOKEN"]),
-        json=file_data,
-        verify=False,
-    )
-
-    print(
-        "Initialize File Response Code: {0}".format(
-            initialize_file_response.status_code
-        )
-    )
-    print("File Content URL: {0}".format(file_content_url))
-
-    print("Uploading file...")
-    with open(file_path, "rb") as file:
-        file_upload_response = requests.put(
-            file_content_url,
-            headers=octet_stream_headers(config["ACCESS_TOKEN"]),
-            data=file,
-            stream=True,
+    # initialize the file
+    with Loader("\tInitializing file...", ""):
+        initialize_file_response = requests.post(
+            file_initialize_url,
+            headers=json_headers(config["ACCESS_TOKEN"]),
+            json=file_data,
             verify=False,
         )
 
-    print("File Upload Response Code: {0}".format(file_upload_response.status_code))
+    # upload the file content
+    with Loader("\tUploading file...", ""):
+        with open(file_path, "rb") as file:
+            file_upload_response = requests.put(
+                file_content_url,
+                headers=octet_stream_headers(config["ACCESS_TOKEN"]),
+                data=file,
+                stream=True,
+                verify=False,
+            )
+    
+    # if the upload failed, log the failure and return
+    if file_upload_response.status_code != 200:
+        print("\tUpload Error: {0}".format(file_upload_response.json()))
+        with open(fail_log_path, "a") as log_file:
+            log_file.write("{0}\n".format(file_name))
+        return
+    
+    # if the upload succeeded, wait 5 seconds before committing the file
+    with Loader("\tWaiting 5 seconds before commit...", ""):
+        import time
+        time.sleep(5)
 
-    print("Committing file...")
-    commit_response = requests.post(
-        file_commit_url,
-        headers=json_headers(config["ACCESS_TOKEN"]),
-        verify=False,
-    )
-    print("Commit File Response Code: {0}".format(commit_response.status_code))
-    print("")
-
-
+    # commit the file
+    with Loader("\tCommitting file...", ""):
+        commit_response = requests.post(
+            file_commit_url,
+            headers=json_headers(config["ACCESS_TOKEN"]),
+            verify=False,
+        )
+        
+    # if the commit failed, log the failure, otherwise log the success
+    if commit_response.status_code != 200:
+        print("\tCommit Error: {0}".format(commit_response.json()))
+        with open(fail_log_path, "a") as log_file:
+            log_file.write("{0}\n".format(file_name))
+    else:
+        print("\tDone ✔")
+        with open(success_log_path, "a") as log_file:
+            log_file.write("{0}\n".format(file_name))
 @task(
     help={
         "environment": "Target UltraViolet environment",
@@ -106,6 +133,15 @@ def create_draft(_ctx, environment="local", file_path=None):
 
         draft_id = draft_response.json()["id"]
         print("Draft Record ID: {0}".format(draft_id))
+        
+        if file_path is not None:
+            file_name = os.path.splitext(os.path.basename(file_path))[0]
+            print("Draft Record Name: {0}".format(file_name))
+            log_dir = os.path.join("logs", "drafts")
+            os.makedirs(log_dir, exist_ok=True)
+            log_path = os.path.join(log_dir, "{0}.txt".format(draft_id))
+            with open(log_path, "w") as log_file:
+                log_file.write("{0}\n".format(file_name))
 
 
 @task(
