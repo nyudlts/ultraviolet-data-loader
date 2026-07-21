@@ -6,7 +6,7 @@ from json import JSONDecodeError
 
 import requests
 from invoke import task
-from loader import Loader
+from tasks.loader import Loader
 
 from tasks.helpers import (
     json_headers,
