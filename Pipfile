@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 invoke = "*"
 requests = "*"
+urllib3 = "<2"
 dotenv = "*"
 
 [dev-packages]
